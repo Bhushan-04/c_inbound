@@ -56,13 +56,15 @@ You will need the following installed:
 
 Use a tool like Postman to test the endpoints.
 
-|       Feature      |  Method  |  Endpoint     | Required Role   |                   Notes                     
-| **Registration**   | `POST`   | `/users`      | Public          | Body: `{ "email": "...", "password": "..." }` 
-| **Login**          | `POST`   | `/auth/login` | Public          | Body: `{ "email": "...", "password": "..." }` 
-| **Read All Users** | `GET`    | `/users`      | **Admin**       | Requires `Authorization: Bearer <token>` of an admin. 
-| **Read One User**  | `GET`    | `/users/:id`  | Authenticated   | Can be any valid token. 
-| **Update User**    | `PATCH`  | `/users/:id`  | Authenticated   | Owner or Admin access enforced in service. 
-| **Delete User**    | `DELETE` | `/users/:id`  | Authenticated   | Owner or Admin access enforced in service. 
+| Feature           | Method | Endpoint     | Required Role  | Notes                                                        |
+|------------------|--------|--------------|----------------|--------------------------------------------------------------|
+| Registration      | POST   | /users       | Public         | Body: `{ "email": "...", "password": "..." }`               |
+| Login             | POST   | /auth/login  | Public         | Body: `{ "email": "...", "password": "..." }`               |
+| Read All Users    | GET    | /users       | Admin          | Requires `Authorization: Bearer <token>` of an admin.       |
+| Read One User     | GET    | /users/:id   | Authenticated  | Any valid token allowed.                                     |
+| Update User       | PATCH  | /users/:id   | Authenticated  | Owner or Admin access enforced in service.                   |
+| Delete User       | DELETE | /users/:id   | Authenticated  | Owner or Admin access enforced in service.                   |
+
 
 ### Testing Authorization (Critical Step)
 
