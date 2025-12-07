@@ -1,9 +1,7 @@
-// src/users/users.service.spec.ts (Final Attempt - Using Jest.mock())
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-// ✅ Import the standard library name, which Jest will replace with our mock
 import * as bcrypt from 'bcrypt'; 
 
 import { UsersService } from './users.service';
@@ -11,11 +9,8 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 
-// ⚠️ Add this line to explicitly tell Jest to use the manual mock found in __mocks__/bcrypt.ts
 jest.mock('bcrypt'); 
 
-
-// --- Stable Mock Repository Definition ---
 type MockRepository = {
   [P in keyof Repository<User>]?: jest.Mock<any>;
 };
@@ -28,7 +23,6 @@ const mockUserRepositoryFactory = (): MockRepository => ({
   find: jest.fn(),
   remove: jest.fn(),
 });
-// --- End Mock Definition ---
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -45,13 +39,10 @@ describe('UsersService', () => {
   const mockCreateUserDto: CreateUserDto = { email: 'new@user.com', password: 'newpassword' };
 
   beforeEach(async () => {
-    // Clear mocks on the 'bcrypt' object so calls are reset before each test
     (bcrypt.hash as jest.Mock).mockClear();
     (bcrypt.genSalt as jest.Mock).mockClear();
     
-    // NOTE: If you need to set specific return values for a test, you must do it here:
     (bcrypt.genSalt as jest.Mock).mockResolvedValue('mockSalt');
-    // Note: hash is auto-set to 'mockHashedPassword' in __mocks__/bcrypt.ts, but can be overridden here if needed.
     
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -71,7 +62,6 @@ describe('UsersService', () => {
     expect(service).toBeDefined();
   });
 
-  // --- CREATE TESTS ---
   describe('create', () => {
     it('should successfully create a new user and hash the password', async () => {
       (userRepository.findOne as jest.Mock).mockResolvedValue(null);
@@ -83,7 +73,6 @@ describe('UsersService', () => {
       expect(result).toEqual(mockUser);
       expect(userRepository.save).toHaveBeenCalled();
       
-      // ✅ Asserting against the mocked function on the 'bcrypt' object
       expect(bcrypt.hash as jest.Mock).toHaveBeenCalledWith(
         mockCreateUserDto.password, 
         'mockSalt' 
@@ -97,7 +86,6 @@ describe('UsersService', () => {
     });
   });
 
-  // --- FINDONE & FINDALL TESTS ---
   describe('findOne', () => {
     it('should find a user by ID', async () => {
       (userRepository.findOneOrFail as jest.Mock).mockResolvedValue(mockUser);
@@ -118,7 +106,6 @@ describe('UsersService', () => {
     });
   });
 
-  // --- UPDATE TESTS (Authorization Logic) ---
   describe('update (Authorization)', () => {
     const updateDto = { email: 'updated@email.com' };
 
@@ -166,12 +153,10 @@ describe('UsersService', () => {
 
       await service.update(mockUser.id, updatePwdDto, mockUser.id, 'user');
       
-      // ✅ Asserting against the mocked function on the 'bcrypt' object
       expect(bcrypt.hash as jest.Mock).toHaveBeenCalledWith('newpassword', 'mockSalt');
     });
   });
 
-  // --- REMOVE TESTS (Authorization Logic) ---
   describe('remove (Authorization)', () => {
     it('should allow admin to remove any user', async () => {
       (userRepository.findOneOrFail as jest.Mock).mockResolvedValue(mockUser);

@@ -1,25 +1,20 @@
-// src/auth/jwt.strategy.spec.ts
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 
-// Define the payload structure expected from the token
 interface JwtPayload {
   sub: string; 
   email: string;
   role: string;
 }
 
-// --- Mock Definition for UsersService ---
 const mockUsersService = {
   findOne: jest.fn(),
 };
-// --- End Mock Definition ---
 
-describe('JwtStrategy', () => { // <--- The Test Suite
+describe('JwtStrategy', () => { 
   let strategy: JwtStrategy;
   let usersService: UsersService;
 
@@ -40,7 +35,7 @@ describe('JwtStrategy', () => { // <--- The Test Suite
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => { // <--- Test 1
+  it('should be defined', () => { 
     expect(strategy).toBeDefined();
   });
 
@@ -55,7 +50,7 @@ describe('JwtStrategy', () => { // <--- The Test Suite
     };
     const payload: JwtPayload = { sub: 'user-1', email: 'test@user.com', role: 'user' };
 
-    it('should successfully return the user payload if the user exists', async () => { // <--- Test 2
+    it('should successfully return the user payload if the user exists', async () => {
       (usersService.findOne as jest.Mock).mockResolvedValue(mockUser);
       const result = await strategy.validate(payload); 
       
@@ -67,7 +62,7 @@ describe('JwtStrategy', () => { // <--- The Test Suite
       });
     });
 
-    it('should throw UnauthorizedException if UsersService fails to find the user', async () => { // <--- Test 3
+    it('should throw UnauthorizedException if UsersService fails to find the user', async () => {
       (usersService.findOne as jest.Mock).mockResolvedValue(null); 
 
       await expect(strategy.validate(payload)).rejects.toThrow(
@@ -76,7 +71,7 @@ describe('JwtStrategy', () => { // <--- The Test Suite
       expect(usersService.findOne).toHaveBeenCalledWith(payload.sub);
     });
 
-    it('should throw UnauthorizedException if the payload contains no user ID (sub)', async () => { // <--- Test 4
+    it('should throw UnauthorizedException if the payload contains no user ID (sub)', async () => { 
         const badPayload = { sub: null, email: 'test@user.com', role: 'user' } as any;
 
         await expect(strategy.validate(badPayload)).rejects.toThrow(

@@ -2,14 +2,14 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid') // Generates unique IDs
+  @PrimaryGeneratedColumn('uuid') 
   id: string;
 
   @Column({ unique: true })
   email: string;
 
   @Column()
-  password: string; // We will hash this later
+  password: string; 
 
   @Column({ default: 'user' })
   role: string;

@@ -14,7 +14,6 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    // Check for existing user
     const existingUser = await this.usersRepository.findOne({ where: { email: createUserDto.email } });
     if (existingUser) {
         throw new ConflictException('User with this email already exists.');
@@ -57,12 +56,9 @@ export class UsersService {
     currentUserRole: string
   ): Promise<User> {
     
-    // --- AUTHORIZATION CHECK ---
-    // Rule: User must be updating their own profile OR have the 'admin' role
     if (targetId !== currentUserId && currentUserRole !== 'admin') {
         throw new ForbiddenException('You are not authorized to update this user profile.');
     }
-    // --- END CHECK ---
 
     const user = await this.findOne(targetId);
 
@@ -81,12 +77,9 @@ export class UsersService {
     currentUserRole: string
   ): Promise<void> {
 
-    // --- AUTHORIZATION CHECK ---
-    // Rule: User must be deleting their own profile OR have the 'admin' role
     if (targetId !== currentUserId && currentUserRole !== 'admin') {
         throw new ForbiddenException('You are not authorized to delete this user profile.');
     }
-    // --- END CHECK ---
     
     const user = await this.findOne(targetId);
     await this.usersRepository.remove(user);

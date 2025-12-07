@@ -75,3 +75,20 @@ Use a tool like Postman to test the endpoints.
     ```
 5.  **Relogin** to get a new token reflecting the 'admin' role.
 6.  **Verify Admin Access:** Try `GET /users` with the new admin token. It must return **`200 OK`**.
+
+## Testing and Code Coverage
+
+The application includes robust unit tests written with Jest to cover all service logic, database interactions, and authorization checks.
+
+### Running Tests
+
+To execute the unit tests and generate the coverage report:
+
+```bash
+npm run test:cov
+```
+
+## Test Coverage
+
+![Test Coverage](public/test_coverage.png)
+
